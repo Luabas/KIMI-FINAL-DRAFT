@@ -23,14 +23,17 @@
       padding: 28px 48px; transition: color 0.8s ease;
     }
     nav .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 14px; font-weight: 600; letter-spacing: 3px;
-      text-transform: uppercase; position: absolute; left: 48px;
+      font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      position: absolute; left: 48px;
       text-decoration: none; color: inherit;
       display: flex; align-items: center; gap: 6px;
     }
     nav .logo img {
       width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .logo .logo-divider {
+      opacity: 0.4; margin: 0 2px;
     }
     nav .nav-right {
       position: absolute; right: 48px;
@@ -77,11 +80,13 @@
     .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
     .menu-overlay a:hover { opacity: 1; }
     .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay a.menu-contact-btn { display: none; }
     .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
     .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
     .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
     .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
     .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+    .menu-overlay.open a:nth-child(6) { transition-delay: 0.48s; }
 
     /* ─── Hero ─── */
     .page-hero {
@@ -89,6 +94,16 @@
       align-items: center; justify-content: center; text-align: center;
       padding: 120px 32px 60px;
       position: relative; overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200%; height: 120%;
+      background: radial-gradient(ellipse at center, rgba(210,214,218,0.82) 0%, rgba(210,214,218,0.42) 40%, rgba(210,214,218,0) 70%);
+      pointer-events: none;
+      z-index: 2;
     }
     #courses-canvas {
       position: absolute; inset: 0; z-index: 1;
@@ -99,7 +114,7 @@
     }
     .page-hero .eyebrow {
       font-size: 11px; font-weight: 500; letter-spacing: 4px;
-      text-transform: uppercase; opacity: 0.55; margin-bottom: 24px;
+      text-transform: uppercase; opacity: 0.82; margin-bottom: 24px;
       position: relative; z-index: 2;
     }
     .page-hero h1 {
@@ -110,7 +125,7 @@
     }
     .page-hero .lede {
       font-size: 16px; font-weight: 300; line-height: 1.9;
-      opacity: 0.6; max-width: 54ch; margin-top: 32px;
+      opacity: 0.82; max-width: 54ch; margin-top: 32px;
       position: relative; z-index: 2;
     }
 
@@ -194,6 +209,18 @@
     }
 @media (max-width: 820px) {
       nav .book-btn { display: none; }
+      .menu-overlay a.menu-contact-btn {
+        display: inline-block;
+        border: 1px solid currentColor;
+        padding: 8px 20px;
+        border-radius: 2px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 16px;
+      }
       nav { padding: 20px 24px; }
       nav .logo { left: 24px; }
       nav .nav-right { right: 24px; }
@@ -236,9 +263,9 @@
 
 
   <nav id="main-nav">
-    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt=""><span class="logo-divider">|</span>Integrative Advising</a>
     <div class="nav-right">
-      <a href="#" class="book-btn">Contact</a>
+      <a href="pricing.html#contact" class="book-btn">Contact</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -251,7 +278,7 @@
     <a href="method.html">ALIIA Method</a>
     <a href="courses.html" class="current">Courses</a>
     <a href="pricing.html">Work With Me</a>
-    
+    <a href="pricing.html#contact" class="menu-contact-btn">Contact</a>
   </div>
 
   <header class="page-hero">
@@ -265,7 +292,8 @@
     <div style="font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 400; margin-bottom: 20px;">Coming soon</div>
     <p style="font-size: 15px; font-weight: 300; line-height: 1.9; opacity: 0.55; max-width: 48ch; margin: 0 auto 28px;">New courses are in development. Sign up for our newsletter to be the first to hear when enrollment opens.</p>
     <form id="notify-form" style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 420px; margin: 0 auto;">
-      <input type="email" id="notify-email" placeholder="Your email address" required style="flex: 1; min-width: 200px; font-family: 'Inter', sans-serif; font-size: 13px; color: #1a1a1a; background: rgba(255,255,255,0.6); border: 1px solid rgba(26,26,26,0.15); border-radius: 30px; padding: 12px 20px; outline: none; transition: border-color 0.3s, background 0.3s;" onfocus="this.style.borderColor='rgba(26,26,26,0.4)';this.style.background='rgba(255,255,255,0.85)';" onblur="this.style.borderColor='rgba(26,26,26,0.15)';this.style.background='rgba(255,255,255,0.6');">
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="email" id="notify-email" name="email" placeholder="Your email address" required style="flex: 1; min-width: 200px; font-family: 'Inter', sans-serif; font-size: 13px; color: #1a1a1a; background: rgba(255,255,255,0.6); border: 1px solid rgba(26,26,26,0.15); border-radius: 30px; padding: 12px 20px; outline: none; transition: border-color 0.3s, background 0.3s;" onfocus="this.style.borderColor='rgba(26,26,26,0.4)';this.style.background='rgba(255,255,255,0.85)';" onblur="this.style.borderColor='rgba(26,26,26,0.15)';this.style.background='rgba(255,255,255,0.6');">
       <button type="submit" style="font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #f0ece4; background: #1a1a1a; border: none; border-radius: 30px; padding: 12px 24px; cursor: pointer; transition: opacity 0.3s; white-space: nowrap;">Join the List</button>
     </form>
     <p id="notify-thanks" style="display: none; font-size: 13px; opacity: 0.6; margin-top: 16px;">Thank you — we'll be in touch when enrollment opens.</p>
@@ -285,14 +313,47 @@
     hamburgerEl.addEventListener('click', () => toggleMenu());
     addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
-    // Notify form
-    document.getElementById('notify-form').addEventListener('submit', function(e) {
+    // Notify form — Formspree AJAX
+    document.getElementById('notify-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('notify-email').value;
-      const form = document.getElementById('notify-form');
+      const form = e.target;
+      const emailInput = document.getElementById('notify-email');
       const thanks = document.getElementById('notify-thanks');
-      form.style.display = 'none';
-      thanks.style.display = 'block';
+      const btn = form.querySelector('button[type="submit"]');
+      const originalBtnText = btn.innerHTML;
+
+      const email = emailInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        thanks.textContent = 'Please enter a valid email address.';
+        thanks.style.color = '#c44';
+        thanks.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = 'Sending...';
+      thanks.style.display = 'none';
+
+      try {
+        const response = await fetch('https://formspree.io/f/xjgnvaen', {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        if (response.ok) {
+          form.outerHTML = '<p style="font-size:14px; opacity:0.8; margin-top:4px;">You\'re on the list!</p>';
+        } else {
+          const data = await response.json();
+          throw new Error(data.error || 'Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnText;
+        thanks.textContent = err.message || 'Could not subscribe. Please try again.';
+        thanks.style.color = '#c44';
+        thanks.style.display = 'block';
+      }
     });
   </script>
   <script>

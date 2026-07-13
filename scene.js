@@ -372,16 +372,13 @@ let cachedScrollY = window.scrollY
 let cachedVH = window.innerHeight
 let cachedVW = window.innerWidth
 
-addEventListener('scroll', () => { cachedScrollY = window.scrollY }, { passive: true })
-
 // ─── Render-skip optimisation: only re-render when something changes ──────
 let prevScrollY = -1
 let prevMouseX = -999
 let prevMouseY = -999
 let needsRender = true
-
-// Mark dirty on scroll
-addEventListener('scroll', () => { needsRender = true }, { passive: true })
+let uiUpdatePending = false
+let prevUiSection = -1
 
 let last = performance.now()
 
@@ -405,12 +402,10 @@ renderer.setAnimationLoop(async () => {
     mesh.rotation.set(currentRotation.x, currentRotation.y, 0)
   }
 
-  // ── Scissor math (use cached values to avoid layout thrashing) ──
+  // ── Scissor math (position-based: canvas wipe aligns with DOM section edges) ──
   const S = cachedScrollY
   const vh = cachedVH
   const vw = cachedVW
-  const topSection = Math.min(Math.floor(S / vh), 5)
-  const frac = Math.min(S / vh - topSection, 1)
 
   renderer.setScissorTest(false)
   renderer.clear(true, true, true)
@@ -419,31 +414,34 @@ renderer.setAnimationLoop(async () => {
 
   for (const mesh of meshes) mesh.visible = false
 
-  // Clamp to valid mesh indices
+  // Find which section the viewport top is in, using real CSS offsets
+  let topIdx = 0
+  for (let i = sectionOffsets.length - 1; i >= 0; i--) {
+    if (S >= sectionOffsets[i]) { topIdx = i; break }
+  }
   const maxIdx = meshes.length - 1
-  const clampedTop = Math.min(Math.max(topSection, 0), maxIdx)
-  const nextIdx = Math.min(clampedTop + 1, maxIdx)
-  const canSplit = frac >= 0.001 && clampedTop < maxIdx
+  topIdx = Math.min(topIdx, maxIdx)
+  const nextIdx = Math.min(topIdx + 1, maxIdx)
+  const boundaryY = nextIdx < sectionOffsets.length ? sectionOffsets[nextIdx] - S : vh + 1
+  const canSplit = boundaryY > 0 && boundaryY < vh
 
   if (!canSplit) {
     // Single section — only render ONE mesh (no split overhead)
     renderer.setScissor(0, 0, vw, vh)
     renderer.setViewport(0, 0, vw, vh)
-    meshes[clampedTop].visible = true
+    meshes[topIdx].visible = true
     renderer.render(scene, camera)
-    meshes[clampedTop].visible = false
+    meshes[topIdx].visible = false
   } else {
-    // Split: top portion = current section, bottom portion = next section
-    const boundaryFromTop = vh * (1 - frac)
-
-    const topH = Math.ceil(boundaryFromTop)
+    // Split at the actual DOM section boundary
+    const topH = Math.ceil(boundaryY)
     renderer.setScissor(0, 0, vw, topH)
     renderer.setViewport(0, 0, vw, vh)
-    meshes[clampedTop].visible = true
+    meshes[topIdx].visible = true
     renderer.render(scene, camera)
-    meshes[clampedTop].visible = false
+    meshes[topIdx].visible = false
 
-    const bottomH = Math.ceil(vh * frac)
+    const bottomH = Math.ceil(vh - boundaryY)
     renderer.setScissor(0, vh - bottomH, vw, bottomH)
     renderer.setViewport(0, 0, vw, vh)
     meshes[nextIdx].visible = true
@@ -492,47 +490,71 @@ for (let i = 0; i < 6; i++) {
 }
 const dots = indicatorsEl.querySelectorAll('.indicator-dot')
 
-let prevUiSection = -1
-addEventListener(
-  'scroll',
-  () => {
-    const S = window.scrollY
-    const vh = window.innerHeight
+// ─── Position-based section detection (immune to 100vh vs innerHeight mismatch) ───
+const sectionEls = document.querySelectorAll('.section')
+let sectionOffsets = []
+function refreshSectionOffsets() {
+  sectionOffsets = Array.from(sectionEls).map((el) => el.offsetTop)
+}
+refreshSectionOffsets()
 
-    // Scroll hint fade out
-    if (scrollHintEl) {
-      scrollHintEl.style.opacity = S > vh * 0.3 ? '0' : ''
-    }
+function getActiveSection(scrollY, vh) {
+  const viewportCenter = scrollY + vh / 2
+  for (let i = sectionOffsets.length - 1; i >= 0; i--) {
+    if (viewportCenter >= sectionOffsets[i]) return i
+  }
+  return 0
+}
 
-    // Active dot
-    const activeSection = Math.min(Math.round(S / vh), 5)
-    if (activeSection !== prevUiSection) {
-      prevUiSection = activeSection
-      dots.forEach((d, i) => d.classList.toggle('active', i === activeSection))
+// ─── Consolidated scroll listener: cache values + schedule UI update ──────
+addEventListener('scroll', () => {
+  cachedScrollY = window.scrollY
+  needsRender = true
 
-      // Switch nav & indicators to light text on dark galaxy section
-      const isDark = activeSection === 5
-      const nav = document.getElementById('main-nav')
-      nav.style.color = isDark ? '#e0e0f0' : ''
-      menuOverlayEl.style.background = isDark
-        ? 'rgba(10, 10, 20, 0.92)'
-        : ''
-      menuOverlayEl.querySelectorAll('a').forEach((a) => {
-        a.style.color = isDark ? '#e0e0f0' : ''
-      })
-      indicatorsEl.style.color = isDark ? '#e0e0f0' : ''
-      dots.forEach((d) => {
-        d.style.borderColor = isDark ? 'rgba(200,200,255,0.4)' : ''
-      })
-      if (scrollHintEl) scrollHintEl.style.color = isDark ? '#e0e0f0' : ''
-    }
-  },
-  { passive: true },
-)
+  if (!uiUpdatePending) {
+    uiUpdatePending = true
+    requestAnimationFrame(() => {
+      uiUpdatePending = false
+      cachedVH = window.innerHeight
+
+      const S = cachedScrollY
+      const vh = cachedVH
+
+      // Scroll hint fade out
+      if (scrollHintEl) {
+        scrollHintEl.style.opacity = S > vh * 0.3 ? '0' : ''
+      }
+
+      // Active dot — position-based, not arithmetic (avoids 100vh vs innerHeight mismatch)
+      const activeSection = getActiveSection(S, vh)
+      if (activeSection !== prevUiSection) {
+        prevUiSection = activeSection
+        dots.forEach((d, i) => d.classList.toggle('active', i === activeSection))
+
+        // Switch nav & indicators to light text on dark galaxy section
+        const isDark = activeSection === 5
+        const nav = document.getElementById('main-nav')
+        nav.style.color = isDark ? '#e0e0f0' : ''
+        menuOverlayEl.style.background = isDark
+          ? 'rgba(10, 10, 20, 0.92)'
+          : ''
+        menuOverlayEl.querySelectorAll('a').forEach((a) => {
+          a.style.color = isDark ? '#e0e0f0' : ''
+        })
+        indicatorsEl.style.color = isDark ? '#e0e0f0' : ''
+        dots.forEach((d) => {
+          d.style.borderColor = isDark ? 'rgba(200,200,255,0.4)' : ''
+        })
+        if (scrollHintEl) scrollHintEl.style.color = isDark ? '#e0e0f0' : ''
+      }
+    })
+  }
+}, { passive: true })
 
 // ─── Resize ──────────────────────────────────────────────────────────────────
 addEventListener('resize', () => {
   cachedVH = innerHeight
+  refreshSectionOffsets()
   cachedVW = innerWidth
   camera.aspect = innerWidth / innerHeight
   camera.updateProjectionMatrix()

@@ -15,14 +15,15 @@
 
     html {
       scroll-behavior: smooth;
-      overscroll-behavior: none;
+      overscroll-behavior-y: contain;
+      overflow-x: clip;
     }
 
     body {
       font-family: 'Inter', sans-serif;
       background: #0a0a14;
       color: #1a1a1a;
-      overflow-x: hidden;
+      overflow-x: clip;
     }
 
     /* ─── Loading Screen ─── */
@@ -101,6 +102,10 @@
       width: 36px;
       height: 36px;
       object-fit: contain;
+    }
+    nav .logo .logo-divider {
+      opacity: 0.4;
+      margin: 0 2px;
     }
 
     nav a {
@@ -241,6 +246,7 @@
       opacity: 1;
     }
 
+    .menu-overlay a.menu-contact-btn { display: none; }
     .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
     .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
     .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
@@ -423,7 +429,7 @@
       font-weight: 300;
       letter-spacing: 1.5px;
       line-height: 2;
-      opacity: 0.55;
+      opacity: 0.72;
       margin-bottom: 10px;
       color: #1a1a1a;
     }
@@ -432,7 +438,7 @@
       font-size: 15px;
       font-weight: 300;
       letter-spacing: 1px;
-      opacity: 0.5;
+      opacity: 0.65;
       margin-bottom: 8px;
       font-style: italic;
       color: #1a1a1a;
@@ -442,7 +448,7 @@
       font-size: 15px;
       font-weight: 300;
       line-height: 1.9;
-      opacity: 0.5;
+      opacity: 0.72;
       font-style: italic;
       color: #1a1a1a;
     }
@@ -460,7 +466,7 @@
       font-size: clamp(15px, 2vw, 18px);
       font-weight: 400;
       font-style: italic;
-      opacity: 0.6;
+      opacity: 0.72;
       line-height: 1.6;
       color: #1a1a1a;
     }
@@ -492,7 +498,45 @@
       nav { padding: 20px 24px; }
       nav .logo { left: 24px; }
       nav .nav-right { right: 24px; }
+      nav .book-btn { display: none; }
+      .menu-overlay a.menu-contact-btn {
+        display: inline-block;
+        border: 1px solid currentColor;
+        padding: 8px 20px;
+        border-radius: 2px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 16px;
+      }
       .section-indicator { right: 16px; }
+      /* Stronger glow backdrops for mobile readability */
+      .section-intro .intro-upper::before,
+      .section-intro .intro-center::before,
+      .section-intro .intro-lower::before {
+        background: radial-gradient(ellipse at center, rgba(240,236,228,0.88) 0%, rgba(240,236,228,0.58) 30%, rgba(240,236,228,0) 70%);
+      }
+      .section-galaxy .section-content::before {
+        background: radial-gradient(ellipse at center, rgba(10,10,20,0.92) 0%, rgba(10,10,20,0.68) 30%, rgba(10,10,20,0) 70%);
+      }
+      .section-spring .section-content::before,
+      .section-summer .section-content::before,
+      .section-autumn .section-content::before,
+      .section-winter .section-content::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 280%;
+        height: 280%;
+        background: radial-gradient(ellipse at center, rgba(255,255,255,0.52) 0%, rgba(255,255,255,0.22) 40%, rgba(255,255,255,0) 70%);
+        pointer-events: none;
+        z-index: -1;
+      }
+      .section-desc { opacity: 0.78; }
     }
   </style>
 </head>
@@ -507,9 +551,9 @@
   </div>
 
   <nav id="main-nav">
-    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt=""><span class="logo-divider">|</span>Integrative Advising</a>
     <div class="nav-right">
-      <a href="#" class="book-btn">Contact</a>
+      <a href="pricing.html#contact" class="book-btn">Contact</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span>
         <span></span>
@@ -524,6 +568,7 @@
     <a href="method.html" class="current">ALIIA Method</a>
     <a href="courses.html">Courses</a>
     <a href="pricing.html">Work With Me</a>
+    <a href="pricing.html#contact" class="menu-contact-btn">Contact</a>
   </div>
 
   <div class="section section-intro" id="sec-0">
@@ -609,6 +654,7 @@
 
   <div class="section-indicator" id="indicators"></div>
   <div class="scroll-hint" id="scroll-hint">Scroll</div>
+
 <script>
   // Dismiss loading screen — called by scene once WebGPU is ready
   window.dismissLoader = function() {

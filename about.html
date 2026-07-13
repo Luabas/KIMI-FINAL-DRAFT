@@ -41,10 +41,14 @@
       left: 48px;
       text-decoration: none;
       color: inherit;
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center;
+      gap: 6px;
     }
     nav .logo img {
       width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .logo .logo-divider {
+      opacity: 0.4; margin: 0 2px;
     }
 
     nav .nav-right {
@@ -111,11 +115,13 @@
     .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
     .menu-overlay a:hover { opacity: 1; }
     .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay a.menu-contact-btn { display: none; }
     .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
     .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
     .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
     .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
     .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+    .menu-overlay.open a:nth-child(6) { transition-delay: 0.48s; }
 
     /* ─── Hero ─── */
     .about-hero {
@@ -243,9 +249,12 @@
       position: relative;
     }
     /* Quote bar */
+    .cta-section {
+      padding: 100px 0;
+    }
     .quote-bar {
       max-width: 1400px; margin: 0 auto;
-      padding: 0 8vw 80px;
+      padding: 0 8vw;
     }
     .quote-bar-inner {
       background: rgba(255,255,255,0.4);
@@ -288,7 +297,7 @@
     /* ALIIA Method preview — infographic style */
     .aliia-preview {
       margin-top: 56px;
-      padding: 48px 40px;
+      padding: 56px 40px 48px;
       background: rgba(255,255,255,0.5);
       border: 1px solid rgba(26,26,26,0.08);
       border-radius: 10px;
@@ -297,7 +306,7 @@
     .aliia-label {
       font-size: 11px; font-weight: 500; letter-spacing: 4px;
       text-transform: uppercase; opacity: 0.45;
-      margin-bottom: 8px;
+      margin-bottom: 56px;
     }
     .aliia-subtitle {
       font-size: 14px; font-weight: 300;
@@ -458,6 +467,18 @@
     }
 @media (max-width: 820px) {
       nav .book-btn { display: none; }
+      .menu-overlay a.menu-contact-btn {
+        display: inline-block;
+        border: 1px solid currentColor;
+        padding: 8px 20px;
+        border-radius: 2px;
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-top: 16px;
+      }
       nav { padding: 20px 24px; }
       nav .logo { left: 24px; }
       nav .nav-right { right: 24px; }
@@ -467,7 +488,7 @@
       .aliia-phases { flex-wrap: wrap; gap: 24px; justify-content: center; }
       .aliia-connector { display: none; }
       .aliia-phase { max-width: 140px; }
-      .aliia-preview { padding: 36px 24px; }
+      .aliia-preview { padding: 56px 24px 36px; }
     }
   
         /* Loading screen */
@@ -500,7 +521,8 @@
     }
     @media (max-width: 768px) {
       nav .book-btn { display: none; }
-      .quote-bar { padding: 0 28px 60px; }
+      .cta-section { padding: 80px 0; }
+      .quote-bar { padding: 0 28px; }
       .quote-bar-inner { flex-direction: column; text-align: center; }
     }
   </style>
@@ -510,9 +532,9 @@
 
 
   <nav id="main-nav">
-    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt=""><span class="logo-divider">|</span>Integrative Advising</a>
     <div class="nav-right">
-      <a href="#" class="book-btn">Contact</a>
+      <a href="pricing.html#contact" class="book-btn">Contact</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -525,7 +547,7 @@
     <a href="method.html">ALIIA Method</a>
     <a href="courses.html">Courses</a>
     <a href="pricing.html">Work With Me</a>
-    
+    <a href="pricing.html#contact" class="menu-contact-btn">Contact</a>
   </div>
 
   <!-- ─── Hero ─── -->
@@ -616,17 +638,19 @@
     </div>
   </section>
 
-  <!-- Quote Bar -->
-  <div class="quote-bar">
-    <div class="quote-bar-inner">
-      <div>&#10022;</div>
-      <p class="quote">The real work begins when you stop treating the symptom and start seeing the system.</p>
-      <a href="booking.html" class="quote-btn">
-        Begin
-        <span class="arrow">&rarr;</span>
-      </a>
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="quote-bar">
+      <div class="quote-bar-inner">
+        <div>&#10022;</div>
+        <p class="quote">Beneath every pattern is a system waiting to be seen. That's where we begin.</p>
+        <a href="pricing.html#plans" class="quote-btn">
+          Begin
+          <span class="arrow">&rarr;</span>
+        </a>
+      </div>
     </div>
-  </div>
+  </section>
 
   <footer style="text-align: center; padding: 60px 28px; border-top: 1px solid rgba(26,26,26,0.08);"><div style="font-size: 12px; letter-spacing: 1px; opacity: 0.5; margin-bottom: 16px;">Integrative Advising</div><div style="font-size: 11px; font-weight: 300; line-height: 1.7; opacity: 0.4; max-width: 65ch; margin: 0 auto;">Integrative advising is an advisory service and is not a substitute for therapy, medical care, diagnosis, treatment, crisis support, legal advice, financial advice, nutrition therapy, or any other licensed professional service.</div></footer>
 
