@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALIIA Method</title>
+  <style>
+     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overscroll-behavior: none;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a14;
+      color: #1a1a1a;
+      overflow-x: hidden;
+    }
+
+    /* ─── Loading Screen ─── */
+    .load-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #f0ece4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+      visibility: visible;
+    }
+    .load-screen.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .load-logo-wrap {
+      position: relative;
+      width: 120px;
+      height: 120px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute;
+      inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12;
+      filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute;
+      inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px 48px;
+      gap: 40px;
+      transition: color 0.8s ease;
+    }
+
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: absolute;
+      left: 48px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    nav .logo img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+    }
+
+    nav a {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0.7;
+      transition: opacity 0.3s;
+    }
+
+    nav a:hover {
+      opacity: 1;
+    }
+
+    nav .nav-right {
+      position: absolute;
+      right: 48px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    nav .nav-right a.nav-link {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0.8;
+      transition: opacity 0.3s;
+    }
+
+    nav .nav-right a.nav-link:hover {
+      opacity: 1;
+    }
+
+    nav .book-btn {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid currentColor;
+      padding: 8px 20px;
+      border-radius: 2px;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    nav .book-btn:hover {
+      opacity: 1;
+    }
+
+    /* Hamburger button */
+    nav .hamburger {
+      width: 28px;
+      height: 18px;
+      position: relative;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: inherit;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+
+    nav .hamburger:hover { opacity: 1; }
+
+    nav .hamburger span {
+      display: block;
+      width: 100%;
+      height: 1.5px;
+      background: currentColor;
+      border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+
+    nav .hamburger.open span:nth-child(1) {
+      transform: translateY(8.25px) rotate(45deg);
+    }
+    nav .hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+    nav .hamburger.open span:nth-child(3) {
+      transform: translateY(-8.25px) rotate(-45deg);
+    }
+
+    /* Fullscreen menu overlay */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      background: rgba(250, 250, 250, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #1a1a1a;
+      text-decoration: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease, color 0.3s ease;
+      padding: 6px 0;
+    }
+
+    .menu-overlay.open a {
+      opacity: 0.65;
+      transform: translateY(0);
+    }
+
+    .menu-overlay a:hover {
+      opacity: 1;
+    }
+
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+    .menu-overlay.open a:nth-child(6) { transition-delay: 0.48s; }
+
+    .section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 80px 60px;
+      transition: background-color 1s ease;
+    }
+
+    .section-content {
+      position: relative;
+      z-index: 20;
+      max-width: 420px;
+      transition: color 0.8s ease;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      line-height: 1.8;
+      opacity: 0.6;
+      font-weight: 300;
+      max-width: 340px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      margin-top: 28px;
+    }
+
+    .tag {
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid;
+      opacity: 0.6;
+      cursor: default;
+      transition: opacity 0.3s;
+    }
+
+    .tag:hover {
+      opacity: 1;
+    }
+
+    .section-indicator {
+      position: fixed;
+      right: 40px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .indicator-dot.active {
+      background: currentColor;
+      transform: scale(1.3);
+    }
+
+    .scroll-hint {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.4;
+      animation: pulseHint 2s ease-in-out infinite;
+      transition: opacity 0.6s;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(5px); }
+    }
+
+    /* Section color themes */
+    .section-intro { background: #f0ece4; }
+    .section-spring { background: #c8dbbe; }
+    .section-summer { background: #e8d4b0; }
+    .section-autumn { background: #d4bfaa; }
+    .section-winter { background: #b8c8dc; }
+    .section-galaxy { background: #0a0a14; }
+
+    .section-intro .section-content {
+      max-width: 520px;
+      text-align: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0 auto;
+    }
+
+    .section-intro {
+      align-items: stretch;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .section-intro .intro-upper {
+      position: absolute;
+      top: 28%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .section-intro .intro-upper::before,
+    .section-intro .intro-center::before,
+    .section-intro .intro-lower::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280%;
+      height: 320%;
+      background: radial-gradient(ellipse at center, rgba(240,236,228,0.75) 0%, rgba(240,236,228,0.45) 30%, rgba(240,236,228,0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .section-intro .intro-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 400;
+      letter-spacing: 12px;
+      text-transform: uppercase;
+      color: #1a1a1a;
+    }
+
+    .section-intro .intro-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .section-intro .intro-etymology {
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 1.5px;
+      line-height: 2;
+      opacity: 0.55;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+
+    .section-intro .intro-pronunciation {
+      font-size: 15px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      opacity: 0.5;
+      margin-bottom: 8px;
+      font-style: italic;
+      color: #1a1a1a;
+    }
+
+    .section-intro .intro-definition {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.9;
+      opacity: 0.5;
+      font-style: italic;
+      color: #1a1a1a;
+    }
+
+    .section-intro .intro-lower {
+      position: absolute;
+      bottom: 24%;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      text-align: center;
+    }
+
+    .section-intro .intro-tagline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(15px, 2vw, 18px);
+      font-weight: 400;
+      font-style: italic;
+      opacity: 0.6;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
+
+    .section-galaxy .section-content,
+    .section-galaxy .section-label,
+    .section-galaxy .section-title,
+    .section-galaxy .section-desc,
+    .section-galaxy .tag {
+      color: #e0e0f0;
+      border-color: rgba(200, 200, 255, 0.3);
+    }
+
+    .section-galaxy .section-content::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280%;
+      height: 180%;
+      background: radial-gradient(ellipse at center, rgba(10,10,20,0.8) 0%, rgba(10,10,20,0.5) 30%, rgba(10,10,20,0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @media (max-width: 768px) {
+      .section { padding: 60px 28px; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .section-indicator { right: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading screen -- fades once scene is ready -->
+  <div class="load-screen" id="load-screen">
+    <div class="load-logo-wrap">
+      <div class="logo-ghost"></div>
+      <div class="logo-fill"></div>
+    </div>
+  </div>
+
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="method.html" class="current">ALIIA Method</a>
+    <a href="courses.html">Courses</a>
+    <a href="pricing.html">Work With Me</a>
+  </div>
+
+  <div class="section section-intro" id="sec-0">
+    <div class="section-content">
+      <div class="intro-upper">
+        <div class="intro-name">ALIIA</div>
+      </div>
+      <div class="intro-center">
+        <div class="intro-etymology">Root: Latin <em>alia</em>, adj./pron.</div>
+        <div class="intro-pronunciation">/AH-lee-ah/ — /ˈa.li.a/</div>
+        <div class="intro-definition">Feminine nominative singular or neuter plural of <em>Alius, Alia, Aliud</em><br>— Another. Other. Different. Alternative.</div>
+      </div>
+      <div class="intro-lower">
+        <div class="intro-tagline">Meeting you where clarity<br>has not yet arrived.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-spring" id="sec-1">
+    <div class="section-content">
+      <div class="section-label">01 — Audit</div>
+      <div class="section-title">The courage<br>to look inward.</div>
+      <div class="section-desc">Before anything can shift, it must first be seen. We map the architecture of your patterns — where they began, how they compounded, and why they persist. This is the ground beneath all change.</div>
+      <div class="tags">
+        <span class="tag">Clarity</span>
+        <span class="tag">Insight</span>
+        <span class="tag">Awareness</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-summer" id="sec-2">
+    <div class="section-content">
+      <div class="section-label">02 — Liberate</div>
+      <div class="section-title">Release what<br>you've carried.</div>
+      <div class="section-desc">Understanding is only the beginning. The body holds what the mind has long tried to forget. Here, we create the conditions for a deeper letting go — freeing what has been stored, so that something new can finally breathe.</div>
+      <div class="tags">
+        <span class="tag">Release</span>
+        <span class="tag">Surrender</span>
+        <span class="tag">Freedom</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-autumn" id="sec-3">
+    <div class="section-content">
+      <div class="section-label">03 — Integrate</div>
+      <div class="section-title">Becoming<br>what you know.</div>
+      <div class="section-desc">With space now cleared, the real work of becoming begins. Insights find their roots. New ways of being are no longer aspirational — they are practiced, embodied, and lived from the inside out.</div>
+      <div class="tags">
+        <span class="tag">Wholeness</span>
+        <span class="tag">Embodiment</span>
+        <span class="tag">Grounding</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-winter" id="sec-4">
+    <div class="section-content">
+      <div class="section-label" style="position:relative;z-index:20;">04 — Iterate</div>
+      <div class="section-title" style="position:relative;z-index:20;">Growth is not<br>a single moment.</div>
+      <div class="section-desc" style="position:relative;z-index:20;">We honor the spiral nature of growth — returning, refining, deepening. Each pass through the work reveals a layer that was not yet ready to be seen.</div>
+      <div class="tags">
+        <span class="tag">Patience</span>
+        <span class="tag">Refinement</span>
+        <span class="tag">Depth</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-galaxy" id="sec-5">
+    <div class="section-content">
+      <div class="section-label">05 — Actualize</div>
+      <div class="section-title">Living the<br>new self.</div>
+      <div class="section-desc">This is what all of it was for. Not a fixed arrival, but a way of moving through the world — lighter, clearer, more wholly yourself. The work doesn't disappear here. It becomes who you are.</div>
+      <div class="tags">
+        <span class="tag">Integration</span>
+        <span class="tag">Embodiment</span>
+        <span class="tag">Becoming</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-indicator" id="indicators"></div>
+  <div class="scroll-hint" id="scroll-hint">Scroll</div>
+<script>
+  // Dismiss loading screen — called by scene once WebGPU is ready
+  window.dismissLoader = function() {
+    var el = document.getElementById('load-screen');
+    if (el) el.classList.add('done');
+  };
+  // Fallback: always dismiss after 6 seconds max
+  setTimeout(window.dismissLoader, 6000);
+</script>
+<script type="module" src="/scene.js"></script>
+  <script src="booking.js"></script>
+</body>
+</html>

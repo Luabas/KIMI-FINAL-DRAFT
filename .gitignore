@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Temporary build artifacts
+.tmp_postcss_extract/
+
+# Backup files
+*.bak

@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Work With Me — Integrative Advising</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0ece4;
+      color: #1a1a1a;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+      display: flex; justify-content: center; align-items: center;
+      padding: 28px 48px;
+    }
+    nav .logo {
+      font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      position: absolute; left: 48px; text-decoration: none; color: inherit;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav .logo img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .nav-right {
+      position: absolute; right: 48px; display: flex; align-items: center; gap: 28px;
+    }
+    nav .book-btn {
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      text-decoration: none; color: inherit; border: 1px solid currentColor;
+      padding: 8px 20px; border-radius: 2px; opacity: 0.85; transition: opacity 0.3s;
+      background: none; cursor: pointer;
+    }
+    nav .book-btn:hover { opacity: 1; }
+    nav .hamburger {
+      color: #1a1a1a;
+      width: 28px; height: 18px; position: relative; cursor: pointer;
+      background: none; border: none; padding: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .hamburger:hover { opacity: 1; }
+    nav .hamburger span {
+      display: block; width: 100%; height: 1.5px;
+      background: #1a1a1a; border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease; transform-origin: center;
+    }
+    nav .hamburger.open span:nth-child(1) { transform: translateY(8.25px) rotate(45deg); }
+    nav .hamburger.open span:nth-child(2) { opacity: 0; }
+    nav .hamburger.open span:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); }
+
+    .menu-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240, 236, 228, 0.94);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400; letter-spacing: 1px; color: #1a1a1a; text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease; padding: 6px 0;
+    }
+    .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
+    .menu-overlay a:hover { opacity: 1; }
+    .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+
+    /* ─── Hero Section ─── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 140px 8vw 80px;
+      gap: 60px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .hero-text .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 24px;
+    }
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 28px;
+      max-width: 12ch;
+    }
+    .hero-text h1 em {
+      font-style: italic;
+    }
+    .hero-text .desc {
+      font-size: 15px; font-weight: 300; line-height: 1.85;
+      opacity: 0.65; max-width: 42ch; margin-bottom: 32px;
+    }
+    .hero-text .cta-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none;
+      color: #f0ece4; background: #1a1a1a;
+      border: none; border-radius: 30px;
+      padding: 14px 28px; cursor: pointer;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .hero-text .cta-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .hero-text .cta-btn .arrow { transition: transform 0.3s; }
+    .hero-text .cta-btn:hover .arrow { transform: translateX(3px); }
+    .hero-text .subtext {
+      font-size: 13px; font-weight: 300; opacity: 0.5;
+      margin-top: 16px;
+    }
+    .hero-image {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      min-height: 400px;
+    }
+    .hero-image img {
+      width: 100%; max-width: 520px; height: auto;
+      object-fit: contain;
+    }
+    #pricing-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #pricing-canvas canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ─── Ways We Can Work Together ─── */
+    .services {
+      padding: 100px 8vw 80px;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .services-header {
+      text-align: center; margin-bottom: 60px;
+    }
+    .services-header h2 {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55;
+    }
+    .services-header .diamond {
+      font-size: 14px; opacity: 0.3; margin-top: 12px;
+    }
+
+    .service-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+    .service-card {
+      background: rgba(255,255,255,0.35);
+      border: 1px solid rgba(26,26,26,0.06);
+      border-radius: 12px;
+      padding: 0 0 36px;
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.25);
+    }
+    .service-card .card-image {
+      width: 100%; aspect-ratio: 1; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #card1-image {
+      background: radial-gradient(circle at 50% 55%, rgba(160, 210, 160, 0.35) 0%, rgba(200, 230, 200, 0.12) 45%, transparent 70%);
+    }
+    #card2-image {
+      background: radial-gradient(circle at 50% 55%, rgba(190, 170, 220, 0.35) 0%, rgba(220, 200, 240, 0.12) 45%, transparent 70%);
+    }
+    #card3-image {
+      background: radial-gradient(circle at 50% 55%, rgba(230, 170, 180, 0.35) 0%, rgba(240, 210, 210, 0.12) 45%, transparent 70%);
+    }
+    .service-card .card-image img {
+      width: 75%; height: 75%; object-fit: contain;
+      transition: transform 0.5s ease;
+    }
+    .service-card:hover .card-image img { transform: scale(1.03); }
+    #card1-canvas, #card2-canvas, #card3-canvas {
+      width: 100%; height: 100%;
+      position: relative;
+    }
+    #card1-canvas canvas, #card2-canvas canvas, #card3-canvas canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .service-card .card-body {
+      padding: 0 32px;
+    }
+    .service-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 500;
+      margin-bottom: 14px;
+    }
+    .service-card .card-desc {
+      font-size: 13px; font-weight: 300; line-height: 1.8;
+      opacity: 0.6; margin-bottom: 20px;
+    }
+    .service-card .meta-row {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 16px;
+    }
+    .service-card .meta-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; opacity: 0.55;
+    }
+    .service-card .meta-item svg {
+      width: 14px; height: 14px; opacity: 0.5; flex-shrink: 0;
+    }
+    .service-card .best-for {
+      font-size: 12px; font-weight: 400; line-height: 1.7;
+      opacity: 0.55; margin-bottom: 24px;
+    }
+    .service-card .best-for strong {
+      font-weight: 500; opacity: 0.8;
+    }
+    .service-card .investment {
+      border-top: 1px solid rgba(26,26,26,0.08);
+      padding-top: 18px;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .service-card .investment-label {
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      opacity: 0.45;
+    }
+    .service-card .investment-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 500;
+      text-align: right;
+    }
+    .service-card .investment-price .save {
+      display: block; font-family: 'Inter', sans-serif;
+      font-size: 11px; font-weight: 400; opacity: 0.4;
+      margin-top: 2px;
+    }
+
+    /* ─── Middle CTA Bar ─── */
+    .cta-bar {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 8vw 80px;
+    }
+    .cta-bar-inner {
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(26,26,26,0.06);
+      border-radius: 12px;
+      padding: 24px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .cta-bar-inner p {
+      font-size: 13px; font-weight: 300; line-height: 1.7; opacity: 0.6;
+    }
+    .cta-bar-inner .cta-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; color: #1a1a1a;
+      white-space: nowrap; opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+    .cta-bar-inner .cta-link:hover { opacity: 1; }
+    .cta-bar-inner .cta-link .arrow { transition: transform 0.3s; }
+    .cta-bar-inner .cta-link:hover .arrow { transform: translateX(3px); }
+
+    /* ─── How It Works ─── */
+    .how-it-works {
+      padding: 80px 8vw 100px;
+      max-width: 1400px; margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .how-left h2 {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 40px;
+    }
+    .timeline {
+      position: relative;
+      padding-left: 48px;
+    }
+    .timeline::before {
+      content: ''; position: absolute; left: 15px; top: 0; bottom: 0;
+      width: 1px; background: rgba(26,26,26,0.12);
+    }
+    .timeline-item {
+      position: relative; margin-bottom: 36px;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item .num {
+      position: absolute; left: -48px; top: 0;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid rgba(26,26,26,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 500; opacity: 0.6;
+      background: #f0ece4;
+    }
+    .timeline-item h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 500; margin-bottom: 8px;
+    }
+    .timeline-item p {
+      font-size: 13px; font-weight: 300; line-height: 1.8; opacity: 0.55;
+      max-width: 36ch;
+    }
+
+    /* ─── Book Discovery Call Section ─── */
+    .how-right {
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(26,26,26,0.06);
+      border-radius: 12px;
+      padding: 48px 40px;
+    }
+    .how-right .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 14px;
+    }
+    .how-right h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; font-weight: 400; margin-bottom: 12px;
+    }
+    .how-right .desc {
+      font-size: 14px; font-weight: 300; line-height: 1.8;
+      opacity: 0.6; margin-bottom: 32px;
+    }
+    .how-right form .form-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    }
+    .how-right form .field { margin-bottom: 16px; }
+    .how-right form label {
+      display: block; font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; opacity: 0.5; margin-bottom: 6px;
+    }
+    .how-right form input,
+    .how-right form select,
+    .how-right form textarea {
+      width: 100%; font-family: 'Inter', sans-serif; font-size: 13px;
+      color: #1a1a1a; background: #fbf8f2;
+      border: 1px solid rgba(26,26,26,0.12); border-radius: 6px;
+      padding: 11px 13px; transition: border-color 0.3s, background 0.3s;
+    }
+    .how-right form textarea { resize: vertical; min-height: 70px; }
+    .how-right form input:focus,
+    .how-right form select:focus,
+    .how-right form textarea:focus {
+      outline: none; border-color: rgba(26,26,26,0.4); background: #fff;
+    }
+    .how-right form .submit-btn {
+      width: 100%; margin-top: 8px;
+      font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: #f0ece4; background: #1a1a1a;
+      border: none; border-radius: 30px;
+      padding: 15px; cursor: pointer;
+      transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .how-right form .submit-btn:hover { opacity: 0.85; }
+
+    /* ─── Bottom Quote Bar ─── */
+    footer {
+      text-align: center; padding: 60px 24px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+      font-size: 12px; letter-spacing: 1px; opacity: 0.5;
+    }
+
+    /* ─── Responsive ─── */
+        nav.scrolled {
+      background: rgba(240, 236, 228, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+@media (max-width: 1024px) {
+      .service-cards { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 120px; }
+      .hero-image { order: -1; }
+      .hero-image img { max-width: 320px; }
+      .how-it-works { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      nav .book-btn { display: none; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .hero { padding: 110px 28px 60px; }
+      .services { padding: 60px 28px; }
+      .cta-bar { padding: 0 28px 60px; }
+      .cta-bar-inner { flex-direction: column; text-align: center; padding: 24px; }
+      .how-it-works { padding: 60px 28px; gap: 48px; }
+      .how-right { padding: 32px 24px; }
+      .how-right form .form-row { grid-template-columns: 1fr; }
+    }
+  
+        /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #f0ece4;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1; visibility: visible;
+    }
+    .load-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .load-logo-wrap {
+      position: relative; width: 80px; height: 80px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12; filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+</style>
+</head>
+<body>
+  <div class="load-screen" id="load-screen"><div class="load-logo-wrap"><div class="logo-ghost"></div><div class="logo-fill"></div></div></div>
+
+
+  <!-- ─── Nav ─── -->
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="method.html">ALIIA Method</a>
+    <a href="courses.html">Courses</a>
+    <a href="pricing.html" class="current">Work With Me</a>
+    
+  </div>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="eyebrow">Work With Me</div>
+      <h1>Clarity where<br>it matters most.</h1>
+      <p class="desc">Each session aims to bring careful synthesis, grounded perspective, and clear next steps to what feels unresolved or difficult to place. Explore the offerings below to choose the advisory format best aligned with the level of support you are seeking.</p>
+      <a href="#" class="cta-btn book-btn">
+        Begin a Conversation
+        <span class="arrow">&rarr;</span>
+      </a>
+      <p class="subtext">Confidential. No obligation.</p>
+    </div>
+    <div class="hero-image">
+      <div id="pricing-canvas"></div>
+    </div>
+  </section>
+
+  <!-- ─── Services ─── -->
+  <section class="services">
+    <div class="services-header">
+      <h2>Ways We Can Work Together</h2>
+      <div class="diamond">&#10022;</div>
+    </div>
+    <div class="service-cards">
+
+      <!-- Card 1: Introductory Session -->
+      <div class="service-card">
+        <div class="card-image" id="card1-image">
+          <div id="card1-canvas"></div>
+        </div>
+        <div class="card-body">
+          <h3>Introductory Session</h3>
+          <p class="card-desc">A single, focused session designed to give you a clear sense of the advisory process and how it may apply to the question or challenge you are bringing.</p>
+          <p class="card-desc">Together, we look at the broader context — personal, relational, professional, wellness-oriented, leadership, and symbolism — to begin identifying relevant connections, clarifying what may need attention, and outlining possible next steps.</p>
+          <div class="meta-row">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Single session
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Virtual
+            </div>
+          </div>
+          <div class="best-for"><strong>Best for:</strong> first-time clients, focused questions, exploring fit, or getting a meaningful introduction to the work before considering deeper engagement</div>
+          <div class="investment">
+            <span class="investment-label">Investment</span>
+            <span class="investment-price">
+              $500
+              <span class="save">Credited in full toward an Intensive completed within 30 days.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Intensive (Featured) -->
+      <div class="service-card">
+        <div class="card-image" id="card2-image">
+          <div id="card2-canvas"></div>
+        </div>
+        <div class="card-body">
+          <h3>Intensive</h3>
+          <p class="card-desc">A concentrated 4-hour engagement across two days for clients seeking deeper analysis and a clear strategic baseline. We examine the broader context of the question or challenge at hand — the pressures, constraints, relationships, signals, and underlying structure — then synthesize what appears most important and formulate suggested next steps forward. This format is designed for depth and clarity without ongoing advisory support; implementation remains client-led after the intensive.</p>
+          <div class="meta-row">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              4 hours over 2 days
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Virtual or in-person
+            </div>
+          </div>
+          <div class="best-for"><strong>Best for:</strong> urgent inflection points, pre-decision clarity, leadership transitions, complex personal or professional questions, or establishing a grounded direction before taking action</div>
+          <div class="investment">
+            <span class="investment-label">Investment</span>
+            <span class="investment-price">$2,000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Monthly Ongoing -->
+      <div class="service-card">
+        <div class="card-image" id="card3-image">
+          <div id="card3-canvas"></div>
+        </div>
+        <div class="card-body">
+          <h3>Monthly Ongoing Support</h3>
+          <p class="card-desc">A dedicated advisory relationship for clients moving through a season where the same questions keep returning, the stakes are increasing, and isolated fixes are no longer enough.</p>
+          <p class="card-desc">Monthly structured sessions with voice note and text support during business hours, custom frameworks, and tailored resources developed specifically for your circumstances.</p>
+          <div class="meta-row">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Monthly sessions + ongoing access
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Voice note &amp; text support
+            </div>
+          </div>
+          <div class="best-for"><strong>Best for:</strong> deep structural work, sustained transformation, high-stakes environments, and building resilience that holds in real life</div>
+          <div class="investment">
+            <span class="investment-label">Investment</span>
+            <span class="investment-price">
+              $3,500+ / mo
+              <span class="save">Customized to scope</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── CTA Bar ─── -->
+  <div class="cta-bar">
+    <div class="cta-bar-inner">
+      <p>&#10022; &nbsp; A limited number of engagements are available at founding rates. Not sure which depth is right? Every engagement begins with a confidential conversation to understand what you're facing and what you're ready for.</p>
+      <a href="#" class="cta-link book-btn">
+        Begin a Conversation
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ─── How It Works + Book Form ─── -->
+  <section class="how-it-works">
+    <div class="how-left">
+      <h2>How It Works</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="num">01</div>
+          <h4>Reach out</h4>
+          <p>Whatever you're navigating, a few honest lines is enough.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="num">02</div>
+          <h4>Find the right fit</h4>
+          <p>A private consultation to understand your situation before anything is decided.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="num">03</div>
+          <h4>The work begins</h4>
+          <p>Together, we move through the ALIIA arc — from clarity into integration, refinement, and action — at the depth and pace that fits your situation.</p>
+        </div>
+      </div>
+    </div>
+    <div class="how-right" id="contact">
+      <div class="eyebrow">Ready to Begin?</div>
+      <h3>Begin a conversation</h3>
+      <p class="desc">A confidential inquiry to understand what you're facing and determine the right depth of engagement. No obligation — just clarity.</p>
+      <form id="discovery-form">
+        <div class="form-row">
+          <div class="field">
+            <label for="df-name">Name</label>
+            <input type="text" id="df-name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="df-email">Email</label>
+            <input type="email" id="df-email" name="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="df-interest">I'm interested in</label>
+          <select id="df-interest" name="interest" required>
+            <option value="" disabled selected>Select a path...</option>
+            <option>Introductory Session ($500)</option>
+            <option>Intensive ($2,000)</option>
+            <option>Monthly Ongoing Support ($3,500+)</option>
+            <option>Not sure yet — let's talk</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="df-message">What are you navigating? (optional)</label>
+          <textarea id="df-message" name="message" placeholder="Share as much or as little as you'd like..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">
+          Continue
+          <span>&rarr;</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <footer style="text-align: center; padding: 60px 28px; border-top: 1px solid rgba(26,26,26,0.08);"><div style="font-size: 12px; letter-spacing: 1px; opacity: 0.5; margin-bottom: 16px;">Integrative Advising</div><div style="font-size: 11px; font-weight: 300; line-height: 1.7; opacity: 0.4; max-width: 65ch; margin: 0 auto;">Integrative advising is an advisory service and is not a substitute for therapy, medical care, diagnosis, treatment, crisis support, legal advice, financial advice, nutrition therapy, or any other licensed professional service.</div></footer>
+
+  <script>
+    // Hamburger
+    const hamburgerEl = document.getElementById('hamburger');
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : !menuOverlayEl.classList.contains('open');
+      menuOverlayEl.classList.toggle('open', open);
+      hamburgerEl.classList.toggle('open', open);
+      hamburgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    hamburgerEl.addEventListener('click', () => toggleMenu());
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+    menuOverlayEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+
+    // Discovery form
+    document.getElementById('discovery-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('.submit-btn');
+      btn.innerHTML = 'Request Sent &check;';
+      btn.style.background = '#4a7c59';
+      setTimeout(() => {
+        btn.innerHTML = 'Continue to Book <span>&rarr;</span>';
+        btn.style.background = '#1a1a1a';
+        e.target.reset();
+      }, 3000);
+    });
+  </script>
+  <script src="booking.js"></script>
+<script type="module" src="pricing-scene.js"></script>
+<script type="module" src="pricing-cards-scene.js"></script>
+<script>
+  window._scenesReady = 0;
+  window.dismissLoader = function() {
+    window._scenesReady++;
+    if (window._scenesReady >= 4) {
+      var el = document.getElementById('load-screen');
+      if (el) el.classList.add('done');
+    }
+  };
+  setTimeout(function() {
+    var el = document.getElementById('load-screen');
+    if (el) el.classList.add('done');
+  }, 6000);
+</script>
+    <!-- Nav scroll background -->
+    <script>
+      window.addEventListener('scroll', function() {
+        document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses — Integrative Advising</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #d2d6da;
+      color: #1a1a1a;
+      overflow-x: hidden;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+      display: flex; justify-content: center; align-items: center;
+      padding: 28px 48px; transition: color 0.8s ease;
+    }
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; position: absolute; left: 48px;
+      text-decoration: none; color: inherit;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav .logo img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .nav-right {
+      position: absolute; right: 48px;
+      display: flex; align-items: center; gap: 28px;
+    }
+    nav .book-btn {
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; color: inherit;
+      border: 1px solid currentColor; padding: 8px 20px; border-radius: 2px;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .book-btn:hover { opacity: 1; }
+    nav .hamburger {
+      color: #1a1a1a;
+      width: 28px; height: 18px; position: relative; cursor: pointer;
+      background: none; border: none; padding: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .hamburger:hover { opacity: 1; }
+    nav .hamburger span {
+      display: block; width: 100%; height: 1.5px;
+      background: #1a1a1a; border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease; transform-origin: center;
+    }
+    nav .hamburger.open span:nth-child(1) { transform: translateY(8.25px) rotate(45deg); }
+    nav .hamburger.open span:nth-child(2) { opacity: 0; }
+    nav .hamburger.open span:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); }
+
+    .menu-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240, 236, 228, 0.94);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400; letter-spacing: 1px; color: #1a1a1a; text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease; padding: 6px 0;
+    }
+    .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
+    .menu-overlay a:hover { opacity: 1; }
+    .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+
+    /* ─── Hero ─── */
+    .page-hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 120px 32px 60px;
+      position: relative; overflow: hidden;
+    }
+    #courses-canvas {
+      position: absolute; inset: 0; z-index: 1;
+      pointer-events: none;
+    }
+    #courses-canvas canvas {
+      display: block; width: 100% !important; height: 100% !important;
+    }
+    .page-hero .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 24px;
+      position: relative; z-index: 2;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 6vw, 76px); font-weight: 400;
+      line-height: 1.1; max-width: 14ch;
+      position: relative; z-index: 2;
+    }
+    .page-hero .lede {
+      font-size: 16px; font-weight: 300; line-height: 1.9;
+      opacity: 0.6; max-width: 54ch; margin-top: 32px;
+      position: relative; z-index: 2;
+    }
+
+    /* ─── Courses grid ─── */
+    .courses-wrap {
+      padding: 40px 8vw 110px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .section-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.5; margin: 70px 0 36px;
+    }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 28px;
+    }
+    .course-card {
+      position: relative;
+      background: #ebe5db;
+      border: 1px solid rgba(26,26,26,0.08);
+      border-radius: 6px;
+      padding: 38px 34px 34px;
+      display: flex; flex-direction: column;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .course-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 30px 60px -34px rgba(0,0,0,0.4);
+      border-color: rgba(26,26,26,0.2);
+    }
+    .course-card .stage {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+      opacity: 0.45; margin-bottom: 18px;
+    }
+    .course-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 27px; font-weight: 500; line-height: 1.2; margin-bottom: 16px;
+    }
+    .course-card .desc {
+      font-size: 14px; font-weight: 300; line-height: 1.85;
+      opacity: 0.65; margin-bottom: 26px; flex-grow: 1;
+    }
+    .course-card .meta {
+      display: flex; gap: 22px; margin-bottom: 24px;
+      padding-top: 20px; border-top: 1px solid rgba(26,26,26,0.1);
+    }
+    .course-card .meta div { display: flex; flex-direction: column; gap: 4px; }
+    .course-card .meta .m-label {
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.45;
+    }
+    .course-card .meta .m-value {
+      font-family: 'Playfair Display', serif; font-size: 16px;
+    }
+    .course-card .enroll {
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; color: inherit;
+      align-self: flex-start;
+      border-bottom: 1px solid currentColor; padding-bottom: 3px;
+      opacity: 0.8; transition: opacity 0.3s;
+    }
+    .course-card .enroll:hover { opacity: 1; }
+    .course-card.featured { background: #e3dccf; }
+    .course-card .badge {
+      position: absolute; top: 22px; right: 22px;
+      font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+      background: #1a1a1a; color: #f0ece4; padding: 5px 12px; border-radius: 20px;
+    }
+
+    footer {
+      text-align: center; padding: 70px 24px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+      font-size: 12px; letter-spacing: 1px; opacity: 0.5;
+    }
+
+        nav.scrolled {
+      background: rgba(210, 214, 218, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+@media (max-width: 820px) {
+      nav .book-btn { display: none; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .courses-wrap { padding: 30px 28px 80px; }
+    }
+  
+        /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #f0ece4;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1; visibility: visible;
+    }
+    .load-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .load-logo-wrap {
+      position: relative; width: 80px; height: 80px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12; filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+    @media (max-width: 768px) { nav .book-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="load-screen" id="load-screen"><div class="load-logo-wrap"><div class="logo-ghost"></div><div class="logo-fill"></div></div></div>
+
+
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="method.html">ALIIA Method</a>
+    <a href="courses.html" class="current">Courses</a>
+    <a href="pricing.html">Work With Me</a>
+    
+  </div>
+
+  <header class="page-hero">
+    <div id="courses-canvas"></div>
+    <div class="eyebrow">Courses</div>
+    <h1>Structured journeys<br>through the work.</h1>
+    <p class="lede">Thoughtfully designed programs that expand your knowledge base, deepen your self-understanding, and equip you with practical frameworks for navigating complexity with greater clarity and confidence.</p>
+  </header>
+
+  <div class="coming-soon" style="padding: 140px 8vw; text-align: center; border-top: 1px solid rgba(26,26,26,0.08);">
+    <div style="font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 400; margin-bottom: 20px;">Coming soon</div>
+    <p style="font-size: 15px; font-weight: 300; line-height: 1.9; opacity: 0.55; max-width: 48ch; margin: 0 auto 28px;">New courses are in development. Sign up for our newsletter to be the first to hear when enrollment opens.</p>
+    <form id="notify-form" style="display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; max-width: 420px; margin: 0 auto;">
+      <input type="email" id="notify-email" placeholder="Your email address" required style="flex: 1; min-width: 200px; font-family: 'Inter', sans-serif; font-size: 13px; color: #1a1a1a; background: rgba(255,255,255,0.6); border: 1px solid rgba(26,26,26,0.15); border-radius: 30px; padding: 12px 20px; outline: none; transition: border-color 0.3s, background 0.3s;" onfocus="this.style.borderColor='rgba(26,26,26,0.4)';this.style.background='rgba(255,255,255,0.85)';" onblur="this.style.borderColor='rgba(26,26,26,0.15)';this.style.background='rgba(255,255,255,0.6');">
+      <button type="submit" style="font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #f0ece4; background: #1a1a1a; border: none; border-radius: 30px; padding: 12px 24px; cursor: pointer; transition: opacity 0.3s; white-space: nowrap;">Join the List</button>
+    </form>
+    <p id="notify-thanks" style="display: none; font-size: 13px; opacity: 0.6; margin-top: 16px;">Thank you — we'll be in touch when enrollment opens.</p>
+  </div>
+
+  <footer style="text-align: center; padding: 60px 28px; border-top: 1px solid rgba(26,26,26,0.08);"><div style="font-size: 12px; letter-spacing: 1px; opacity: 0.5; margin-bottom: 16px;">Integrative Advising</div><div style="font-size: 11px; font-weight: 300; line-height: 1.7; opacity: 0.4; max-width: 65ch; margin: 0 auto;">Integrative advising is an advisory service and is not a substitute for therapy, medical care, diagnosis, treatment, crisis support, legal advice, financial advice, nutrition therapy, or any other licensed professional service.</div></footer>
+
+  <script>
+    const hamburgerEl = document.getElementById('hamburger');
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : !menuOverlayEl.classList.contains('open');
+      menuOverlayEl.classList.toggle('open', open);
+      hamburgerEl.classList.toggle('open', open);
+      hamburgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    hamburgerEl.addEventListener('click', () => toggleMenu());
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+    // Notify form
+    document.getElementById('notify-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('notify-email').value;
+      const form = document.getElementById('notify-form');
+      const thanks = document.getElementById('notify-thanks');
+      form.style.display = 'none';
+      thanks.style.display = 'block';
+    });
+  </script>
+  <script>
+  window.dismissLoader = function() {
+    var el = document.getElementById('load-screen');
+    if (el) el.classList.add('done');
+  };
+  setTimeout(window.dismissLoader, 6000);
+</script>
+  <script type="module" src="./courses-scene.js"></script>
+  <script src="booking.js"></script>
+    <!-- Nav scroll background -->
+    <script>
+      window.addEventListener('scroll', function() {
+        document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+      });
+    </script>
+</body>
+</html>

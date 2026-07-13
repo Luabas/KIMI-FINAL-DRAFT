@@ -1,0 +1,225 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #fafafa;
+    color: #1a1a1a;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Prevent scroll when modal is open */
+  body.modal-open {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  /* Section color themes */
+  .section-intro {
+    background: #f0ece4;
+  }
+
+  .section-spring {
+    background: #c8dbbe;
+  }
+
+  .section-summer {
+    background: #e8d4b0;
+  }
+
+  .section-autumn {
+    background: #d4bfaa;
+  }
+
+  .section-winter {
+    background: #b8c8dc;
+  }
+
+  .section-galaxy {
+    background: #0a0a14;
+  }
+
+  /* Section content entrance animations */
+  .section-content .animate-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .section-content.active .animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-content.active .animate-in-delay-1 {
+    transition-delay: 0.1s;
+  }
+
+  .section-content.active .animate-in-delay-2 {
+    transition-delay: 0.2s;
+  }
+
+  .section-content.active .animate-in-delay-3 {
+    transition-delay: 0.35s;
+  }
+
+  .section-content.active .animate-in-delay-4 {
+    transition-delay: 0.5s;
+  }
+
+  .section-content.active .animate-in-delay-5 {
+    transition-delay: 0.58s;
+  }
+
+  .section-content.active .animate-in-delay-6 {
+    transition-delay: 0.66s;
+  }
+
+  /* Tag hover */
+  .tag-pill {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .tag-pill:hover {
+    opacity: 1;
+  }
+
+  /* Card hover effect */
+  .card-hover {
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px -34px rgba(0, 0, 0, 0.4);
+    border-color: rgba(26, 26, 26, 0.2);
+  }
+
+  .card-hover-dark:hover {
+    border-color: rgba(240, 236, 228, 0.25);
+  }
+
+  /* Menu overlay link hover */
+  .menu-link {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease, color 0.3s ease;
+  }
+
+  .menu-overlay.open .menu-link {
+    opacity: 0.65;
+    transform: translateY(0);
+  }
+
+  .menu-link:hover {
+    opacity: 1 !important;
+  }
+
+  /* Scroll hint pulse */
+  @keyframes pulseHint {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0);
+    }
+    50% {
+      transform: translateX(-50%) translateY(5px);
+    }
+  }
+
+  /* Intro entrance animation */
+  @keyframes introFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .intro-animate {
+    animation: introFadeIn 1.2s ease forwards;
+  }
+
+  /* Founder photo placeholder gradient */
+  .founder-photo-gradient {
+    background: linear-gradient(160deg, #d8cfc2, #c4b7a8);
+  }
+
+  /* Pillar top border */
+  .pillar-border {
+    border-top: 1px solid rgba(26, 26, 26, 0.15);
+  }
+
+  /* Booking modal backdrop */
+  .booking-backdrop {
+    background: rgba(26, 22, 18, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .booking-backdrop.bk-dark .booking-modal {
+    background: #14141f;
+    border-color: rgba(200, 200, 255, 0.18);
+    color: #e6e6f2;
+  }
+
+  .booking-backdrop.bk-dark .booking-modal .bk-close::before,
+  .booking-backdrop.bk-dark .booking-modal .bk-close::after {
+    background: #e6e6f2;
+  }
+
+  .booking-backdrop.bk-dark .booking-modal input,
+  .booking-backdrop.bk-dark .booking-modal select,
+  .booking-backdrop.bk-dark .booking-modal textarea {
+    background: #1d1d2b;
+    color: #e6e6f2;
+    border-color: rgba(200, 200, 255, 0.2);
+  }
+
+  .booking-backdrop.bk-dark .booking-modal input:focus,
+  .booking-backdrop.bk-dark .booking-modal select:focus,
+  .booking-backdrop.bk-dark .booking-modal textarea:focus {
+    border-color: rgba(200, 200, 255, 0.6);
+    background: rgba(35, 35, 52, 0.5);
+  }
+
+  .booking-backdrop.bk-dark .booking-modal .bk-submit {
+    background: #e6e6f2;
+    color: #14141f;
+    border-color: #e6e6f2;
+  }
+
+  .booking-backdrop.bk-dark .booking-modal .bk-success .bk-check {
+    border-color: #f0f0fa;
+  }
+
+  .booking-backdrop.bk-dark .booking-modal .bk-success button {
+    color: #e6e6f2;
+    border-color: #e6e6f2;
+  }
+
+  .booking-backdrop.bk-dark .booking-modal .bk-success button:hover {
+    background: #e6e6f2;
+    color: #14141f;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+}

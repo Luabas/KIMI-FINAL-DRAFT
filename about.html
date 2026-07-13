@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Integrative Advising</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0ece4;
+      color: #1a1a1a;
+      overflow-x: hidden;
+    }
+
+    /* ─── Navigation (consistent with home / method) ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px 48px;
+      transition: color 0.8s ease;
+    }
+
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: absolute;
+      left: 48px;
+      text-decoration: none;
+      color: inherit;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav .logo img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
+
+    nav .nav-right {
+      position: absolute;
+      right: 48px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    nav .book-btn {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid currentColor;
+      padding: 8px 20px;
+      border-radius: 2px;
+      opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+    nav .book-btn:hover { opacity: 1; }
+
+    nav .hamburger {
+      color: #1a1a1a;
+      width: 28px; height: 18px;
+      position: relative;
+      cursor: pointer;
+      background: none; border: none; padding: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .hamburger:hover { opacity: 1; }
+    nav .hamburger span {
+      display: block; width: 100%; height: 1.5px;
+      background: #1a1a1a; border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease;
+      transform-origin: center;
+    }
+    nav .hamburger.open span:nth-child(1) { transform: translateY(8.25px) rotate(45deg); }
+    nav .hamburger.open span:nth-child(2) { opacity: 0; }
+    nav .hamburger.open span:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); }
+
+    .menu-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240, 236, 228, 0.94);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400; letter-spacing: 1px;
+      color: #1a1a1a; text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      padding: 6px 0;
+    }
+    .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
+    .menu-overlay a:hover { opacity: 1; }
+    .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+
+    /* ─── Hero ─── */
+    .about-hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 32px 60px;
+      position: relative;
+      overflow: hidden;
+      /* Sea-glass wash — gives the torus definition and depth */
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 45%, rgba(140, 184, 168, 0.38) 0%, rgba(240, 236, 228, 0) 70%),
+        radial-gradient(ellipse 50% 50% at 65% 55%, rgba(168, 200, 184, 0.26) 0%, rgba(240, 236, 228, 0) 60%),
+        #f0ece4;
+    }
+    .about-hero .eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.55;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .about-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5.5vw, 68px);
+      font-weight: 400;
+      line-height: 1.15;
+      max-width: 22ch;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 20px;
+    }
+    .about-hero .lede {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.9;
+      opacity: 0.6;
+      max-width: 52ch;
+      margin-top: 32px;
+      position: relative;
+      z-index: 2;
+    }
+    /* Soft radial glow behind hero text for readability over 3D shape */
+    .about-hero .eyebrow,
+    .about-hero h1,
+    .about-hero .lede {
+      position: relative;
+    }
+    .about-hero .eyebrow::before,
+    .about-hero h1::before,
+    .about-hero .lede::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280%;
+      height: 320%;
+      background: radial-gradient(ellipse at center, rgba(240,236,228,0.45) 0%, rgba(240,236,228,0.27) 30%, rgba(240,236,228,0) 70%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* 3D torus canvas behind hero */
+    #about-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #about-canvas canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ─── Generic section ─── */
+    .about-section {
+      padding: 110px 8vw;
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .about-section:nth-of-type(even) { background: #ebe5db; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 20px;
+    }
+    .about-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px, 4vw, 48px);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 28px;
+      max-width: 18ch;
+    }
+    .about-section p {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.9;
+      opacity: 0.7;
+      max-width: 60ch;
+      margin-bottom: 18px;
+    }
+    .founder-grid > h2,
+    .founder-grid > p {
+      max-width: none;
+    }
+    /* Full-width text variant */
+    .about-section.fullwidth-text h2,
+    .about-section.fullwidth-text p {
+      max-width: none;
+    }
+
+    .about-section {
+      position: relative;
+    }
+    /* Quote bar */
+    .quote-bar {
+      max-width: 1400px; margin: 0 auto;
+      padding: 0 8vw 80px;
+    }
+    .quote-bar-inner {
+      background: rgba(255,255,255,0.4);
+      border: 1px solid rgba(26,26,26,0.06);
+      border-radius: 12px;
+      padding: 28px 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 24px;
+    }
+    .quote-bar-inner .quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-size: 17px;
+      opacity: 0.7; line-height: 1.5;
+    }
+    .quote-bar-inner .quote-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; color: #1a1a1a;
+      white-space: nowrap; opacity: 0.85;
+      transition: opacity 0.3s;
+    }
+    .quote-bar-inner .quote-btn:hover { opacity: 1; }
+    .quote-bar-inner .quote-btn .arrow { transition: transform 0.3s; }
+    .quote-bar-inner .quote-btn:hover .arrow { transform: translateX(3px); }
+
+    /* Integrative Advising infographic preview */
+    .info-preview {
+      margin: 40px 0 48px;
+      padding: 24px;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(26,26,26,0.08);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .info-preview img {
+      width: 100%;
+      display: block;
+      border-radius: 6px;
+    }
+    /* ALIIA Method preview — infographic style */
+    .aliia-preview {
+      margin-top: 56px;
+      padding: 48px 40px;
+      background: rgba(255,255,255,0.5);
+      border: 1px solid rgba(26,26,26,0.08);
+      border-radius: 10px;
+      text-align: center;
+    }
+    .aliia-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.45;
+      margin-bottom: 8px;
+    }
+    .aliia-subtitle {
+      font-size: 14px; font-weight: 300;
+      opacity: 0.55; margin-bottom: 40px;
+    }
+    .aliia-phases {
+      display: flex; align-items: flex-start; justify-content: center;
+      gap: 0; position: relative;
+    }
+    .aliia-phase {
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1; max-width: 160px; min-width: 100px;
+    }
+    .aliia-phase .circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(26,26,26,0.1);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; margin-bottom: 16px;
+    }
+    .aliia-phase .circle .step-num {
+      position: absolute; top: -6px; left: 50%;
+      transform: translateX(-50%);
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #1a1a1a; color: #f0ece4;
+      font-size: 10px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      letter-spacing: 0;
+    }
+    .aliia-phase .circle .icon {
+      font-size: 26px; opacity: 0.6;
+    }
+    .aliia-phase .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px; font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .aliia-phase .desc {
+      font-size: 12px; font-weight: 300; line-height: 1.7;
+      opacity: 0.55; max-width: 130px; margin: 0 auto;
+    }
+    .aliia-connector {
+      width: 40px; height: 1px;
+      border-top: 1px dotted rgba(26,26,26,0.25);
+      margin-top: 36px; flex-shrink: 0;
+    }
+    .aliia-link {
+      display: inline-block; margin-top: 36px;
+      font-size: 12px; font-weight: 500; letter-spacing: 1px;
+      text-transform: uppercase; text-decoration: none;
+      color: inherit; opacity: 0.55;
+      transition: opacity 0.3s;
+    }
+    .aliia-link:hover { opacity: 0.9; }
+
+    /* Founder layout with photo */
+    .founder-grid {
+      display: block;
+    }
+    .founder-grid::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+    .founder-photo {
+      float: left;
+      width: 38%;
+      max-width: 420px;
+      margin: 0 48px 24px 0;
+      position: relative;
+      aspect-ratio: 4 / 5;
+      border-radius: 4px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #d8cfc2, #c4b7a8);
+      box-shadow: 0 30px 60px -30px rgba(0,0,0,0.35);
+    }
+    .founder-photo img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* Placeholder shown until a photo is added */
+    .founder-photo .placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      color: rgba(26,26,26,0.5);
+      padding: 24px;
+    }
+    .founder-photo .placeholder svg { width: 40px; height: 40px; opacity: 0.5; }
+    .founder-photo .placeholder span {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .founder-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 500;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    .founder-role {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      margin-bottom: 28px;
+    }
+    .founder-sign {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 22px;
+      opacity: 0.65;
+      margin-top: 24px;
+    }
+
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 28px;
+      max-width: 900px;
+    }
+    .principle {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .principle .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #1a1a1a; opacity: 0.5;
+      margin-top: 8px; flex-shrink: 0;
+    }
+    .principle p { font-size: 14px; margin-bottom: 0; opacity: 0.65; }
+
+    footer {
+      text-align: center;
+      padding: 70px 24px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+      font-size: 12px;
+      letter-spacing: 1px;
+      opacity: 0.5;
+    }
+
+        nav.scrolled {
+      background: rgba(240, 236, 228, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+@media (max-width: 820px) {
+      nav .book-btn { display: none; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .founder-photo { float: none; width: 100%; max-width: 360px; margin: 0 auto 36px; }
+      .about-section { padding: 80px 28px; }
+      .section-geometry { display: none; }
+      .aliia-phases { flex-wrap: wrap; gap: 24px; justify-content: center; }
+      .aliia-connector { display: none; }
+      .aliia-phase { max-width: 140px; }
+      .aliia-preview { padding: 36px 24px; }
+    }
+  
+        /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #f0ece4;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1; visibility: visible;
+    }
+    .load-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .load-logo-wrap {
+      position: relative; width: 80px; height: 80px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12; filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+    @media (max-width: 768px) {
+      nav .book-btn { display: none; }
+      .quote-bar { padding: 0 28px 60px; }
+      .quote-bar-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="load-screen" id="load-screen"><div class="load-logo-wrap"><div class="logo-ghost"></div><div class="logo-fill"></div></div></div>
+
+
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html">Home</a>
+    <a href="about.html" class="current">About</a>
+    <a href="method.html">ALIIA Method</a>
+    <a href="courses.html">Courses</a>
+    <a href="pricing.html">Work With Me</a>
+    
+  </div>
+
+  <!-- ─── Hero ─── -->
+  <header class="about-hero">
+    <div id="about-canvas"></div>
+    <div class="eyebrow">About</div>
+    <h1>For the seen, the unseen, and the space between.</h1>
+    <p class="lede">For questions, transitions, and recurring challenges that cannot be understood through one lens alone.</p>
+  </header>
+
+  <!-- ─── 1. Founder ─── -->
+  <section class="about-section">
+    <div class="section-label">01 — Founder</div>
+    <div class="founder-grid">
+      <div class="founder-photo">
+        <img id="founder-img" src="assets/founder.png" alt="Founder portrait"
+             onload="document.getElementById('founder-placeholder').style.display='none';">
+        <div class="placeholder" id="founder-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/>
+          </svg>
+          <span>Founder Photo</span>
+        </div>
+      </div>
+
+      <h2 style="margin-bottom:8px;">Meeting people in the in-between.</h2>
+      <div class="founder-name">Nicole Yasmin</div>
+      <div class="founder-role">Founder &amp; Integrative Advisor</div>
+      <p>This practice was created for the space between categories — where a challenge is not purely personal, professional, relational, physical, emotional, or existential, but shaped by several dimensions at once.</p>
+      <p>With an academic foundation in Chemical Engineering, Nicole Yasmin brings a systems-oriented lens to her work: a disciplined way of seeing variables, constraints, relationships, and the larger structures that shape a situation.</p>
+      <p>Her advisory perspective is also deeply lived. After moving through a severe health crisis that conventional care could only partially explain, she spent years studying, experimenting, and rebuilding a way forward across disciplines. That process sharpened both her analytical capacity and her intuitive perception, including extrasensory abilities that had been present since childhood but became clearer through the experience.</p>
+      <p>Her work is further informed by leadership experience, close proximity to serious illness, refined pattern recognition, and a deep respect for what can be missed when a person's life is divided into separate categories.</p>
+      <p>This history is not offered as medical authority or a promise of outcome. It is the origin of a practice built around synthesis, discernment, and the ability to perceive what may be difficult to name from within a single frame.</p>
+      <p>From this lens, the ALIIA Method emerged: a structured, five-phase arc — moving from complexity into integration, refinement, and lived direction.</p>
+    </div>
+
+    <!-- ALIIA Method Preview -->
+    <div class="aliia-preview">
+      <div class="aliia-label">The ALIIA Method</div>
+      <div class="aliia-phases">
+        <div class="aliia-phase">
+          <div class="circle"><span class="step-num">1</span><span class="icon">&#9673;</span></div>
+          <div class="name">Audit</div>
+          <div class="desc">Logic, brought to the patterns of a life.</div>
+        </div>
+        <div class="aliia-connector"></div>
+        <div class="aliia-phase">
+          <div class="circle"><span class="step-num">2</span><span class="icon">&#8857;</span></div>
+          <div class="name">Liberate</div>
+          <div class="desc">Releasing what has outlived its purpose.</div>
+        </div>
+        <div class="aliia-connector"></div>
+        <div class="aliia-phase">
+          <div class="circle"><span class="step-num">3</span><span class="icon">&#8759;</span></div>
+          <div class="name">Integrate</div>
+          <div class="desc">Bridging what was learned into how you live.</div>
+        </div>
+        <div class="aliia-connector"></div>
+        <div class="aliia-phase">
+          <div class="circle"><span class="step-num">4</span><span class="icon">&#10041;</span></div>
+          <div class="name">Iterate</div>
+          <div class="desc">Refining it against real life, until it holds.</div>
+        </div>
+        <div class="aliia-connector"></div>
+        <div class="aliia-phase">
+          <div class="circle"><span class="step-num">5</span><span class="icon">&#9734;</span></div>
+          <div class="name">Actualize</div>
+          <div class="desc">The growth, realized.</div>
+        </div>
+      </div>
+      <a href="method.html" class="aliia-link">Explore the full method &rarr;</a>
+    </div>
+  </section>
+
+  <!-- ─── 2. What is Integrative Advising ─── -->
+  <section class="about-section fullwidth-text">
+    <div class="section-label">02 — The Practice</div>
+    <h2>What is integrative advising?</h2>
+    <p>Persistent obstacles are rarely isolated issues.</p>
+    <p>They often live in the relationship between things: what is visible and what is unspoken, what has been tried and what remains unresolved, what a person knows intellectually and what their life keeps asking them to understand differently.</p>
+    <p>Integrative advising looks at the wider context surrounding a question or challenge, then helps clarify what may be keeping it in place and what kind of foundation is needed for what comes next.</p>
+    <p>The work is structural, intuitive, and deeply individualized. Each engagement is shaped around what the client is ready to see, strengthen, release, practice, or build.</p>
+
+    <!-- Integrative Advising Infographic -->
+    <div class="info-preview">
+      <img src="assets/integrative-advising-infographic.png" alt="Integrative Advisor — sees the whole picture and the in-between, connecting therapeutic, medical, nutritional, business, coaching, and spiritual contexts" style="width: 100%; display: block; border-radius: 6px;">
+    </div>
+  </section>
+
+  <!-- Quote Bar -->
+  <div class="quote-bar">
+    <div class="quote-bar-inner">
+      <div>&#10022;</div>
+      <p class="quote">The real work begins when you stop treating the symptom and start seeing the system.</p>
+      <a href="booking.html" class="quote-btn">
+        Begin
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <footer style="text-align: center; padding: 60px 28px; border-top: 1px solid rgba(26,26,26,0.08);"><div style="font-size: 12px; letter-spacing: 1px; opacity: 0.5; margin-bottom: 16px;">Integrative Advising</div><div style="font-size: 11px; font-weight: 300; line-height: 1.7; opacity: 0.4; max-width: 65ch; margin: 0 auto;">Integrative advising is an advisory service and is not a substitute for therapy, medical care, diagnosis, treatment, crisis support, legal advice, financial advice, nutrition therapy, or any other licensed professional service.</div></footer>
+
+  <script>
+    // Hamburger menu toggle
+    const hamburgerEl = document.getElementById('hamburger');
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : !menuOverlayEl.classList.contains('open');
+      menuOverlayEl.classList.toggle('open', open);
+      hamburgerEl.classList.toggle('open', open);
+      hamburgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    hamburgerEl.addEventListener('click', () => toggleMenu());
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+    // Founder photo: show the image once a valid src is provided
+    const founderImg = document.getElementById('founder-img');
+    const founderPlaceholder = document.getElementById('founder-placeholder');
+    if (founderImg && founderImg.getAttribute('src')) {
+      founderImg.style.display = 'block';
+      founderImg.addEventListener('load', () => { founderPlaceholder.style.display = 'none'; });
+    }
+  </script>
+  <script>
+  window.dismissLoader = function() {
+    var el = document.getElementById('load-screen');
+    if (el) el.classList.add('done');
+  };
+  setTimeout(window.dismissLoader, 6000);
+</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://esm.sh/three@0.185.0",
+      "three/webgpu": "https://esm.sh/three@0.185.0/webgpu",
+      "three/tsl": "https://esm.sh/three@0.185.0/tsl",
+      "three/examples/jsm/environments/RoomEnvironment.js": "https://esm.sh/three@0.185.0/examples/jsm/environments/RoomEnvironment.js",
+      "stats-gl": "https://esm.sh/stats-gl@4.1.0"
+    }
+  }
+  </script>
+  <script type="module" src="./about-scene.js"></script>
+  <script src="booking.js"></script>
+    <!-- Nav scroll background -->
+    <script>
+      window.addEventListener('scroll', function() {
+        document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+      });
+    </script>
+</body>
+</html>

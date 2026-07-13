@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Integrative Advising</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; overscroll-behavior: none; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0ece4;
+      color: #1a1a1a;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+      display: flex; justify-content: center; align-items: center;
+      padding: 28px 48px;
+    }
+    nav .logo {
+      font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      position: absolute; left: 48px; text-decoration: none; color: inherit;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav .logo img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .nav-right {
+      position: absolute; right: 48px; display: flex; align-items: center; gap: 28px;
+    }
+    nav .book-btn {
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      text-decoration: none; color: inherit; border: 1px solid currentColor;
+      padding: 8px 20px; border-radius: 2px; opacity: 0.85; transition: opacity 0.3s;
+      background: none; cursor: pointer;
+    }
+    nav .book-btn:hover { opacity: 1; }
+    nav .hamburger {
+      color: #1a1a1a;
+      width: 28px; height: 18px; position: relative; cursor: pointer;
+      background: none; border: none; padding: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .hamburger:hover { opacity: 1; }
+    nav .hamburger span {
+      display: block; width: 100%; height: 1.5px;
+      background: #1a1a1a; border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease; transform-origin: center;
+    }
+    nav .hamburger.open span:nth-child(1) { transform: translateY(8.25px) rotate(45deg); }
+    nav .hamburger.open span:nth-child(2) { opacity: 0; }
+    nav .hamburger.open span:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); }
+
+    .menu-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240, 236, 228, 0.94);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400; letter-spacing: 1px; color: #1a1a1a; text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease; padding: 6px 0;
+    }
+    .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
+    .menu-overlay a:hover { opacity: 1; }
+    .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+    .menu-overlay.open a:nth-child(6) { transition-delay: 0.48s; }
+
+    /* ─── Hero ─── */
+    .home-hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 120px 48px 60px;
+      position: relative;
+    }
+    #home-canvas {
+      position: absolute;
+      top: 0; right: -15vw;
+      width: 80vw; height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+    #home-canvas canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .home-hero .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+    }
+    .home-hero .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.5; margin-bottom: 24px;
+    }
+    .home-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(42px, 5.5vw, 80px);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .home-hero .tagline {
+      font-size: 15px; font-weight: 300;
+      opacity: 0.65;
+      line-height: 1.8;
+      max-width: 44ch;
+    }
+    .home-hero .cta-row {
+      display: flex; gap: 16px; margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .home-hero .cta-primary {
+      display: inline-block;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none;
+      color: #f0ece4; background: #1a1a1a;
+      border: 1px solid #1a1a1a; border-radius: 30px;
+      padding: 14px 28px; transition: opacity 0.3s, transform 0.3s;
+    }
+    .home-hero .cta-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .home-hero .cta-secondary {
+      display: inline-block;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none;
+      color: #1a1a1a; background: transparent;
+      border: 1px solid rgba(26,26,26,0.25); border-radius: 30px;
+      padding: 14px 28px; transition: all 0.3s;
+    }
+    .home-hero .cta-secondary:hover {
+      border-color: #1a1a1a; background: rgba(26,26,26,0.04);
+    }
+    .home-hero .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+      opacity: 0.35; animation: pulseHint 2s ease-in-out infinite;
+    }
+    @keyframes pulseHint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(5px); }
+    }
+
+    footer {
+      text-align: center; padding: 60px 24px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+      font-size: 12px; letter-spacing: 1px; opacity: 0.5;
+    }
+
+        nav.scrolled {
+      background: rgba(240, 236, 228, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+@media (max-width: 1024px) {
+      .home-hero { grid-template-columns: 1fr; padding: 100px 32px 60px; text-align: center; }
+      .home-hero .hero-content { max-width: none; text-align: center; }
+      .home-hero .tagline { max-width: none; text-align: center; }
+      .home-hero .cta-row { justify-content: center; }
+      #home-canvas { width: 100vw; right: -5vw; opacity: 0.18; }
+      .home-hero h1 { font-size: clamp(36px, 8vw, 64px); letter-spacing: 4px; }
+    }
+    @media (max-width: 768px) {
+      body { touch-action: pan-y; }
+      nav .book-btn { display: none; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .pathway-cards { grid-template-columns: 1fr; }
+      .home-hero { padding: 100px 28px 60px; text-align: center; }
+      .home-hero .hero-content { max-width: none; text-align: center; }
+      .home-hero .cta-row { justify-content: center; }
+      #home-canvas { width: 120vw; right: -10vw; opacity: 0.16; }
+      .home-hero h1 { font-size: clamp(32px, 10vw, 56px); letter-spacing: 4px; }
+    }
+  
+        /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #f0ece4;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1; visibility: visible;
+    }
+    .load-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .load-logo-wrap {
+      position: relative; width: 80px; height: 80px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12; filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+</style>
+</head>
+<body>
+  <div class="load-screen" id="load-screen"><div class="load-logo-wrap"><div class="logo-ghost"></div><div class="logo-fill"></div></div></div>
+
+
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html" class="current">Home</a>
+    <a href="about.html">About</a>
+    <a href="method.html">ALIIA Method</a>
+    <a href="courses.html">Courses</a>
+    <a href="pricing.html">Work With Me</a>
+    
+  </div>
+
+  <!-- ─── Hero ─── -->
+  <section class="home-hero">
+    <div id="home-canvas"></div>
+    <div class="hero-content">
+      <div class="eyebrow">Clarity. Alignment. Impact.</div>
+      <h1>See the whole<br>pattern in <span style="color: #5E3FA0; font-family: 'Playfair Display', serif;">motion</span></h1>
+      <p class="tagline">A discreet advisory practice for those navigating what cannot be understood in parts — bringing perception, structure, and precision to questions that have outlasted conventional answers</p>
+      <div class="cta-row">
+        <a href="about.html" class="cta-primary">Learn more</a>
+        <a href="about.html" class="cta-secondary">Begin a conversation</a>
+      </div>
+    </div>
+  </section>
+
+
+
+  <script>
+    const hamburgerEl = document.getElementById('hamburger');
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : !menuOverlayEl.classList.contains('open');
+      menuOverlayEl.classList.toggle('open', open);
+      hamburgerEl.classList.toggle('open', open);
+      hamburgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    hamburgerEl.addEventListener('click', () => toggleMenu());
+    window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+    menuOverlayEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+  </script>
+  <script>
+  window.dismissLoader = function() {
+    var el = document.getElementById('load-screen');
+    if (el) el.classList.add('done');
+  };
+  setTimeout(window.dismissLoader, 6000);
+</script>
+  <script type="module" src="./home-scene.js"></script>
+  <script src="booking.js"></script>
+    <!-- Nav scroll background -->
+    <script>
+      window.addEventListener('scroll', function() {
+        document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+      });
+    </script>
+</body>
+</html>

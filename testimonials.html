@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testimonials — Integrative Advising</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0ece4; color: #1a1a1a; overflow-x: hidden;
+    }
+
+    /* ─── Navigation ─── */
+    nav {
+      position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+      display: flex; justify-content: center; align-items: center;
+      padding: 28px 48px; transition: color 0.8s ease;
+    }
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 14px; font-weight: 600; letter-spacing: 3px;
+      text-transform: uppercase; position: absolute; left: 48px;
+      text-decoration: none; color: inherit;
+      display: flex; align-items: center; gap: 6px;
+    }
+    nav .logo img {
+      width: 36px; height: 36px; object-fit: contain;
+    }
+    nav .nav-right {
+      position: absolute; right: 48px;
+      display: flex; align-items: center; gap: 28px;
+    }
+    nav .book-btn {
+      font-size: 12px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; text-decoration: none; color: inherit;
+      border: 1px solid currentColor; padding: 8px 20px; border-radius: 2px;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .book-btn:hover { opacity: 1; }
+    nav .hamburger {
+      color: #1a1a1a;
+      width: 28px; height: 18px; position: relative; cursor: pointer;
+      background: none; border: none; padding: 0;
+      display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0.85; transition: opacity 0.3s;
+    }
+    nav .hamburger:hover { opacity: 1; }
+    nav .hamburger span {
+      display: block; width: 100%; height: 1.5px;
+      background: #1a1a1a; border-radius: 2px;
+      transition: transform 0.4s ease, opacity 0.3s ease; transform-origin: center;
+    }
+    nav .hamburger.open span:nth-child(1) { transform: translateY(8.25px) rotate(45deg); }
+    nav .hamburger.open span:nth-child(2) { opacity: 0; }
+    nav .hamburger.open span:nth-child(3) { transform: translateY(-8.25px) rotate(-45deg); }
+
+    .menu-overlay {
+      position: fixed; inset: 0; z-index: 99;
+      background: rgba(240, 236, 228, 0.94);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: auto; }
+    .menu-overlay a {
+      font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 52px);
+      font-weight: 400; letter-spacing: 1px; color: #1a1a1a; text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease; padding: 6px 0;
+    }
+    .menu-overlay.open a { opacity: 0.65; transform: translateY(0); }
+    .menu-overlay a:hover { opacity: 1; }
+    .menu-overlay a.current { opacity: 1; font-style: italic; }
+    .menu-overlay.open a:nth-child(1) { transition-delay: 0.08s; }
+    .menu-overlay.open a:nth-child(2) { transition-delay: 0.16s; }
+    .menu-overlay.open a:nth-child(3) { transition-delay: 0.24s; }
+    .menu-overlay.open a:nth-child(4) { transition-delay: 0.32s; }
+    .menu-overlay.open a:nth-child(5) { transition-delay: 0.40s; }
+
+    /* ─── Hero ─── */
+    .page-hero {
+      min-height: 52vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; text-align: center;
+      padding: 160px 32px 60px;
+    }
+    .page-hero .eyebrow {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 24px;
+    }
+    .page-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(40px, 6vw, 76px); font-weight: 400;
+      line-height: 1.1; max-width: 16ch;
+    }
+    .page-hero .lede {
+      font-size: 16px; font-weight: 300; line-height: 1.9;
+      opacity: 0.6; max-width: 52ch; margin-top: 32px;
+    }
+
+    /* ─── Featured quote ─── */
+    .featured-quote {
+      max-width: 900px; margin: 20px auto 0; padding: 0 8vw 90px;
+      text-align: center;
+    }
+    .featured-quote blockquote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 3.6vw, 44px);
+      font-weight: 400; font-style: italic; line-height: 1.45;
+      opacity: 0.85;
+    }
+    .featured-quote .attr {
+      margin-top: 34px; font-size: 12px; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.5;
+    }
+
+    /* ─── Masonry-ish grid of testimonials ─── */
+    .testi-wrap {
+      padding: 30px 8vw 60px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .section-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 4px;
+      text-transform: uppercase; opacity: 0.5; margin: 60px 0 36px;
+      text-align: center;
+    }
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; max-width: 900px; margin: 0 auto;
+    }
+    .testi-card {
+      break-inside: avoid; margin-bottom: 26px;
+      background: #ebe5db; border: 1px solid rgba(26,26,26,0.08);
+      border-radius: 6px; padding: 32px 30px;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .testi-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 26px 50px -34px rgba(0,0,0,0.4);
+    }
+    .testi-card .stars {
+      font-size: 13px; letter-spacing: 3px; opacity: 0.55; margin-bottom: 16px;
+    }
+    .testi-card p {
+      font-size: 15px; font-weight: 300; line-height: 1.8;
+      opacity: 0.78; margin-bottom: 24px;
+    }
+    .testi-card .who {
+      display: flex; align-items: center; gap: 14px;
+      padding-top: 18px; border-top: 1px solid rgba(26,26,26,0.1);
+    }
+    .testi-card .avatar {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; font-size: 16px;
+      color: #f0ece4; background: #1a1a1a;
+    }
+    .testi-card .who .name {
+      font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 500;
+    }
+    .testi-card .who .meta {
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.5;
+    }
+
+    /* ─── CTA strip ─── */
+    .testi-cta {
+      text-align: center; padding: 80px 24px 100px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+    }
+    .testi-cta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 44px); font-weight: 400;
+      margin-bottom: 28px; max-width: 18ch; margin-inline: auto;
+    }
+    .testi-cta a {
+      display: inline-block; font-size: 12px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; text-decoration: none;
+      color: #f0ece4; background: #1a1a1a; padding: 15px 38px; border-radius: 2px;
+      transition: opacity 0.3s;
+    }
+    .testi-cta a:hover { opacity: 0.85; }
+
+    footer {
+      text-align: center; padding: 50px 24px;
+      border-top: 1px solid rgba(26,26,26,0.08);
+      font-size: 12px; letter-spacing: 1px; opacity: 0.5;
+    }
+
+        nav.scrolled {
+      background: rgba(240, 236, 228, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+@media (max-width: 820px) {
+      nav .book-btn { display: none; }
+      nav { padding: 20px 24px; }
+      nav .logo { left: 24px; }
+      nav .nav-right { right: 24px; }
+      .testi-wrap { padding: 24px 24px 50px; }
+      .testi-grid { grid-template-columns: 1fr; }
+    }
+  
+        /* Loading screen */
+    .load-screen {
+      position: fixed; inset: 0; z-index: 200;
+      background: #f0ece4;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1; visibility: visible;
+    }
+    .load-screen.done { opacity: 0; visibility: hidden; pointer-events: none; }
+    .load-logo-wrap {
+      position: relative; width: 80px; height: 80px;
+    }
+    .load-logo-wrap .logo-ghost {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      opacity: 0.12; filter: grayscale(1);
+    }
+    .load-logo-wrap .logo-fill {
+      position: absolute; inset: 0;
+      background: url(assets/logo.png) center/contain no-repeat;
+      clip-path: inset(100% 0 0 0);
+      animation: loadFill 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    @keyframes loadFill {
+      0%   { clip-path: inset(100% 0 0 0); }
+      100% { clip-path: inset(0 0 0 0); }
+    }
+    @media (max-width: 768px) { nav .book-btn { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="load-screen" id="load-screen"><div class="load-logo-wrap"><div class="logo-ghost"></div><div class="logo-fill"></div></div></div>
+
+
+  <nav id="main-nav">
+    <a href="index.html" class="logo"><img src="assets/logo-mark.png" alt="">Integrative Advising</a>
+    <div class="nav-right">
+      <a href="#" class="book-btn">Contact</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="menu-overlay" id="menu-overlay">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="method.html">ALIIA Method</a>
+    <a href="courses.html">Courses</a>
+    <a href="pricing.html">Work With Me</a>
+    <a href="testimonials.html" class="current">Testimonials</a>
+  </div>
+
+  <header class="page-hero">
+    <div class="eyebrow">Testimonials</div>
+    <h1>Real stories.<br>Real transformation.</h1>
+    <p class="lede">A glimpse into what becomes possible when complexity is met with depth, discernment, and steady support — and when the next step becomes clear enough to take.</p>
+  </header>
+
+  <div class="featured-quote">
+    <blockquote>“I came in wanting answers. I left with something better — a relationship with my own clarity that I'll carry for the rest of my life.”</blockquote>
+    <div class="attr">— Eleanor V., Core Journey Graduate</div>
+  </div>
+
+  <div class="testi-wrap">
+    <div class="section-label">More Reflections</div>
+    <div class="testi-grid">
+
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>Within the first hour, the connection between a professional decision and a much older personal pattern became unmistakably clear. I did not expect to see so much, so precisely.</p>
+        <div class="who">
+          <div class="avatar">M</div>
+          <div><div class="name">Marcus T.</div><div class="meta">Intensive</div></div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>I have worked with exceptional advisors before. What distinguished this experience was the pace — unhurried, exacting, and deeply respectful of my own timing. The clarity that emerged has proven durable.</p>
+        <div class="who">
+          <div class="avatar">S</div>
+          <div><div class="name">Sofia R.</div><div class="meta">Monthly Mentorship</div></div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>A single session brought into focus what months of conventional approaches had circled without naming. I left with a clearer sense of the terrain — and of what I was actually navigating.</p>
+        <div class="who">
+          <div class="avatar">J</div>
+          <div><div class="name">James K.</div><div class="meta">Introductory Session</div></div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <div class="stars">★★★★★</div>
+        <p>The value was not in being given answers. It was in being accompanied through the process of discerning my own — with precision, discretion, and a quality of attention that made the difference sustain.</p>
+        <div class="who">
+          <div class="avatar">L</div>
+          <div><div class="name">Liam O.</div><div class="meta">Monthly Mentorship</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="testi-cta">
+    <h2>Your story could be next</h2>
+    <a href="pricing.html#contact">Start a conversation</a>
+  </div>
+
+  <footer style="text-align: center; padding: 60px 28px; border-top: 1px solid rgba(26,26,26,0.08);"><div style="font-size: 12px; letter-spacing: 1px; opacity: 0.5; margin-bottom: 16px;">Integrative Advising</div><div style="font-size: 11px; font-weight: 300; line-height: 1.7; opacity: 0.4; max-width: 65ch; margin: 0 auto;">Integrative advising is an advisory service and is not a substitute for therapy, medical care, diagnosis, treatment, crisis support, legal advice, financial advice, nutrition therapy, or any other licensed professional service.</div></footer>
+
+  <script>
+    const hamburgerEl = document.getElementById('hamburger');
+    const menuOverlayEl = document.getElementById('menu-overlay');
+    function toggleMenu(force) {
+      const open = force !== undefined ? force : !menuOverlayEl.classList.contains('open');
+      menuOverlayEl.classList.toggle('open', open);
+      hamburgerEl.classList.toggle('open', open);
+      hamburgerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    hamburgerEl.addEventListener('click', () => toggleMenu());
+    addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+  </script>
+  <script src="booking.js"></script>
+<script>
+  window.addEventListener('load', function() {
+    document.getElementById('load-screen').classList.add('done');
+  });
+</script>
+    <!-- Nav scroll background -->
+    <script>
+      window.addEventListener('scroll', function() {
+        document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 60);
+      });
+    </script>
+</body>
+</html>
